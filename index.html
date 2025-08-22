@@ -69,24 +69,32 @@
         .instructions ul {
             margin-bottom: 0;
         }
+        .counter {
+            text-align: right;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Markdown Text Filter</h1>
-            <p>Введите текст с Markdown разметкой и получите его без жирного шрифта</p>
+            <p>Введите текст с Markdown разметкой и получите его без текста, который был выделен жирным</p>
         </div>
         
         <div class="text-areas">
             <div class="text-area-container">
                 <label for="inputText">Исходный текст (Markdown):</label>
                 <textarea id="inputText" placeholder="Введите текст с Markdown разметкой здесь..."></textarea>
+                <div class="counter">Символов: <span id="inputCount">0</span></div>
             </div>
             
             <div class="text-area-container">
-                <label for="outputText">Текст без жирного шрифта:</label>
-                <textarea id="outputText" readonly placeholder="Здесь появится текст без жирного шрифта..."></textarea>
+                <label for="outputText">Текст без жирных фрагментов:</label>
+                <textarea id="outputText" readonly placeholder="Здесь появится текст без фрагментов, выделенных жирным..."></textarea>
+                <div class="counter">Символов: <span id="outputCount">0</span></div>
             </div>
         </div>
         
@@ -94,9 +102,10 @@
             <h3>Как использовать:</h3>
             <ul>
                 <li>Введите или вставьте текст с Markdown разметкой в левое поле</li>
-                <li>Текст автоматически обработается и удалит все элементы жирного шрифта</li>
+                <li>Текст автоматически обработается и удалит все фрагменты, выделенные жирным шрифтом</li>
                 <li>Результат отобразится в правом поле</li>
-                <li>Жирный текст в Markdown обозначается как **жирный** или __жирный__</li>
+                <li>Удаляется текст между **двойными звездочками** и __двойными подчеркиваниями__</li>
+                <li>Пример: "Это **жирный текст**, а это обычный" → "Это , а это обычный"</li>
             </ul>
         </div>
     </div>
@@ -105,19 +114,26 @@
         document.addEventListener('DOMContentLoaded', function() {
             const inputText = document.getElementById('inputText');
             const outputText = document.getElementById('outputText');
+            const inputCount = document.getElementById('inputCount');
+            const outputCount = document.getElementById('outputCount');
             
-            function removeBoldText(markdownText) {
-                // Удаляем жирный текст в формате **текст** и __текст__
-                // Используем регулярное выражение для поиска и замены
+            function removeBoldTextContent(markdownText) {
+                // Удаляем полностью текст между ** и __ вместе с разметкой
                 return markdownText
-                    .replace(/\*\*(.*?)\*\*/g, '$1')  // Удаляем **жирный**
-                    .replace(/__(.*?)__/g, '$1');     // Удаляем __жирный__
+                    .replace(/\*\*(.*?)\*\*/g, '')  // Удаляем **жирный текст** полностью
+                    .replace(/__(.*?)__/g, '');     // Удаляем __жирный текст__ полностью
+            }
+            
+            function updateCounters() {
+                inputCount.textContent = inputText.value.length;
+                outputCount.textContent = outputText.value.length;
             }
             
             function updateOutput() {
                 const text = inputText.value;
-                const processedText = removeBoldText(text);
+                const processedText = removeBoldTextContent(text);
                 outputText.value = processedText;
+                updateCounters();
             }
             
             // Обработка ввода в реальном времени
