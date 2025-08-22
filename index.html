@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Text Filter</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .text-areas {
+            display: flex;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .text-areas {
+                flex-direction: column;
+            }
+        }
+        .text-area-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .text-area-container label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+        }
+        .instructions {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            border-left: 4px solid #4a90e2;
+            margin-top: 20px;
+        }
+        .instructions h3 {
+            margin-top: 0;
+        }
+        .instructions ul {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Markdown Text Filter</h1>
+            <p>Введите текст с Markdown разметкой и получите его без жирного шрифта</p>
+        </div>
+        
+        <div class="text-areas">
+            <div class="text-area-container">
+                <label for="inputText">Исходный текст (Markdown):</label>
+                <textarea id="inputText" placeholder="Введите текст с Markdown разметкой здесь..."></textarea>
+            </div>
+            
+            <div class="text-area-container">
+                <label for="outputText">Текст без жирного шрифта:</label>
+                <textarea id="outputText" readonly placeholder="Здесь появится текст без жирного шрифта..."></textarea>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>Как использовать:</h3>
+            <ul>
+                <li>Введите или вставьте текст с Markdown разметкой в левое поле</li>
+                <li>Текст автоматически обработается и удалит все элементы жирного шрифта</li>
+                <li>Результат отобразится в правом поле</li>
+                <li>Жирный текст в Markdown обозначается как **жирный** или __жирный__</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputText = document.getElementById('inputText');
+            const outputText = document.getElementById('outputText');
+            
+            function removeBoldText(markdownText) {
+                // Удаляем жирный текст в формате **текст** и __текст__
+                // Используем регулярное выражение для поиска и замены
+                return markdownText
+                    .replace(/\*\*(.*?)\*\*/g, '$1')  // Удаляем **жирный**
+                    .replace(/__(.*?)__/g, '$1');     // Удаляем __жирный__
+            }
+            
+            function updateOutput() {
+                const text = inputText.value;
+                const processedText = removeBoldText(text);
+                outputText.value = processedText;
+            }
+            
+            // Обработка ввода в реальном времени
+            inputText.addEventListener('input', updateOutput);
+            
+            // Инициализация при загрузке
+            updateOutput();
+        });
+    </script>
+</body>
+</html>
